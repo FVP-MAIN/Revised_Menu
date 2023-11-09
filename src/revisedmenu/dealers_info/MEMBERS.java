@@ -40,7 +40,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
        s_piba, s_piba1, s_datepiba, s_idpcard, s_payout, s_payout1, s_banktrans, s_blocked, s_blocked1, s_term, s_term1, s_dtb, s_dealcat, s_team, s_mh,
        s_sex, s_om, s_omdeal, s_fm, s_fmdeal, s_known, s_nationality, s_civilstat, s_tnumber, s_offphone, s_profession,
        s_tin, s_mobphone, s_altphone, s_email, s_altemail, s_legacy, s_loyal, s_autorev, s_autoship, s_fmnominated, s_omnominated,
-       s_isas, s_packagedate, s_rem, s_remlegal, s_hofcateg;
+       s_isas, s_packagedate, s_rem, s_remlegal, s_hofcateg, s_aegexpdate;
  Date Date_Plus, Date_Q, Date_Birth, Date_Max, Date_Exp, Date_Act, Date_Inc, Date_Piba, Date_DTB, Date_ISAS;
 
   int nCnt = 0;
@@ -2808,15 +2808,24 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                     stmt_update8.setString(2, s_ba);                 
                     int rowsUpdated8 = stmt_update8.executeUpdate();
                     
+                    String update_sql9 = "UPDATE AGNEW SET "
+                    + "BDAY = ?, EXPDATE = ? "
+                    + "WHERE IDNO_MINOR = ? ";
+                    PreparedStatement stmt_update9 = conn_obj.prepareStatement(update_sql9);
+                    stmt_update9.setString(1, s_bdate);
+                    stmt_update9.setString(2, s_aegexpdate);
+                    stmt_update9.setString(3, s_ba);
+                    int rowsUpdated9 = stmt_update9.executeUpdate();
+                    
                   
                     
                  
                    if(rowsUpdated1 >= 0 && rowsUpdated2 >= 0 && rowsUpdated3 >= 0 && rowsUpdated4 >= 0 && rowsUpdated5 >= 0 
-                      && rowsUpdated6 >= 0  && rowsUpdated7 >= 0 && rowsUpdated8 >= 0  ) {
+                     && rowsUpdated6 >= 0  && rowsUpdated7 >= 0 && rowsUpdated8 >= 0 && rowsUpdated9 >= 0  ) {
                     JOptionPane.showMessageDialog(null, "UPDATED.", "SUCCESS", JOptionPane.INFORMATION_MESSAGE);
-                   }else{
-                   JOptionPane.showMessageDialog(null, "No Records Found.", "Error", JOptionPane.INFORMATION_MESSAGE);
-                   }
+                    }else{
+                    JOptionPane.showMessageDialog(null, "No Records Found.", "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
 
               
                     

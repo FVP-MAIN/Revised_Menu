@@ -457,8 +457,7 @@ public class Home extends javax.swing.JFrame {
                 .addGap(0, 520, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(4, 4, 4)
-                .addComponent(dname, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+                .addComponent(dname, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
