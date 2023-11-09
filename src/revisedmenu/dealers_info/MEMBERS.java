@@ -1172,7 +1172,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
             }
         });
 
-        Cashier.setEnabled(false);
+        Cashier.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         Cashier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CashierActionPerformed(evt);
@@ -2861,8 +2861,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
     }//GEN-LAST:event_txtTeamKeyPressed
 
     private void CashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CashierActionPerformed
-         Home hw = new Home(); 
-         
+               
          
     }//GEN-LAST:event_CashierActionPerformed
 

@@ -602,7 +602,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_ITEM_MANILAMouseClicked
 
     private void DEAL_INFOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DEAL_INFOActionPerformed
-               final MEMBERS mem = new MEMBERS();
+                final MEMBERS mem = new MEMBERS();
                 desktopPaneControl.removeAll();
                 desktopPaneControl.repaint();
                 desktopPaneControl.revalidate();
@@ -611,6 +611,35 @@ public class Home extends javax.swing.JFrame {
                 desktopPaneControl.add(mem);
                 mem.setResizable(false);
                 mem.txtBA.grabFocus();
+                
+                 try {
+                    String Username = null;
+                    Connection conn_obj = OracleSqlConnect.ConnectDB();
+
+                    String sql1 = "SELECT USRNAME FROM REVISED_USERS WHERE USRNAME = ? AND PASWRD = ?";
+                    PreparedStatement stmt1 = conn_obj.prepareStatement(sql1);
+                    stmt1.setString(1, username.getText().trim());
+                    stmt1.setString(2, password.getText().trim());
+
+                    ResultSet rs1 = stmt1.executeQuery();
+
+                    if (rs1.next()) {
+                      Username = rs1.getString("USRNAME");
+                       mem.Cashier.setText(Username);
+                       mem.Cashier.setEditable(false);
+                    } else {
+                        // Handle the case where no matching user is found
+                        // You might want to display an error message or take appropriate action
+                    }
+
+                    rs1.close();
+                    stmt1.close();
+                } catch (SQLException ex) {
+                    // Handle or log the exception here
+                    ex.printStackTrace();
+                }
+
+                           
                 mem.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 Dimension desktopSize = desktopPaneControl.getSize();
                 Dimension jInternalFrameSize = mem.getSize();
