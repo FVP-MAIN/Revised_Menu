@@ -76,20 +76,21 @@ public class Home extends javax.swing.JFrame {
         PROMO = new javax.swing.JMenuItem();
         INSTITUTIONAL_SALES = new javax.swing.JMenuItem();
         TVPS = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu5 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
+        loginForm = new javax.swing.JMenu();
         jMenu8 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
-        loginForm = new javax.swing.JMenu();
         jMenu11 = new javax.swing.JMenu();
-        jMenu5 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
         closeBar = new javax.swing.JMenu();
 
         jMenu3.setText("File");
@@ -188,6 +189,7 @@ public class Home extends javax.swing.JFrame {
 
         IT_ACCESS.setBorder(null);
         IT_ACCESS.setText("IT Access");
+        IT_ACCESS.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         IT_ACCESS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IT_ACCESSActionPerformed(evt);
@@ -205,6 +207,7 @@ public class Home extends javax.swing.JFrame {
 
         DEAL_INFO.setText("Delear's Information");
         DEAL_INFO.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        DEAL_INFO.setEnabled(false);
         DEAL_INFO.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 DEAL_INFOMouseWheelMoved(evt);
@@ -372,8 +375,21 @@ public class Home extends javax.swing.JFrame {
 
         menuBar.add(IT_ACCESS);
 
+        jMenu1.setText("Operation");
+        jMenu1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        menuBar.add(jMenu1);
+
+        jMenu5.setBorder(null);
+        jMenu5.setText("Reports");
+        jMenu5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMenu5.add(jMenuItem3);
+        jMenu5.add(jMenuItem4);
+
+        menuBar.add(jMenu5);
+
         jMenu6.setBorder(null);
         jMenu6.setText("Maintenance");
+        jMenu6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jMenu6.add(jMenuItem5);
         jMenu6.add(jMenuItem6);
 
@@ -381,23 +397,11 @@ public class Home extends javax.swing.JFrame {
 
         jMenu7.setBorder(null);
         jMenu7.setText("Incentives");
+        jMenu7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jMenu7.add(jMenuItem7);
         jMenu7.add(jMenuItem8);
 
         menuBar.add(jMenu7);
-
-        jMenu8.setBorder(null);
-        jMenu8.setText("Others");
-        jMenu8.add(jMenuItem9);
-
-        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem10ActionPerformed(evt);
-            }
-        });
-        jMenu8.add(jMenuItem10);
-
-        menuBar.add(jMenu8);
 
         loginForm.setBorder(null);
         loginForm.setText("Login");
@@ -413,19 +417,28 @@ public class Home extends javax.swing.JFrame {
         });
         menuBar.add(loginForm);
 
+        jMenu8.setBorder(null);
+        jMenu8.setText("Others");
+        jMenu8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMenu8.add(jMenuItem9);
+
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu8.add(jMenuItem10);
+
+        menuBar.add(jMenu8);
+
         jMenu11.setBorder(null);
         jMenu11.setText("Window");
+        jMenu11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         menuBar.add(jMenu11);
-
-        jMenu5.setBorder(null);
-        jMenu5.setText("Report");
-        jMenu5.add(jMenuItem3);
-        jMenu5.add(jMenuItem4);
-
-        menuBar.add(jMenu5);
 
         closeBar.setBorder(null);
         closeBar.setText("Close");
+        closeBar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         closeBar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeBarMouseClicked(evt);
@@ -829,6 +842,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu11;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
