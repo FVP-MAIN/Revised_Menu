@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9daebae0-2f09-4e72-a425-4df0ef3bfa52">
+	<property name="ireport.zoom" value="1.7715610000000044"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="31"/>
+	<parameter name="past" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="present" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\mis\\Documents\\NetBeansProjects\\DELSUM_TEST\\src\\delsum_test\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.DRDATE, B.ITMCOD, SUM(B.QTY), C.DES, C.SUPNME
+FROM DR_H2 A, DR_D2 B, ITEMS C 
+WHERE A.DRNO= B.DRNO 
+and b.itmcod = c.itmcod
+and a.isdlvry = 'T'
+and a.drdate >= $P{past}
+and a.drdate <= $P{present}
+and (a.iscancel = 'F' or iscancel is null or iscancel = ' ')
+and c.supnme in(select supnme from supplier_vita)
+group by a.drdate,b.itmcod, c.des, c.supnme
+order by c.supnme]]>
+	</queryString>
+	<field name="DRDATE" class="java.sql.Timestamp"/>
+	<field name="ITMCOD" class="java.lang.String"/>
+	<field name="SUM(B.QTY)" class="java.math.BigDecimal"/>
+	<field name="DES" class="java.lang.String"/>
+	<field name="SUPNME" class="java.lang.String"/>
+	<group name="GROUPINGS">
+		<groupExpression><![CDATA[$F{SUPNME}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<staticText>
+					<reportElement x="2" y="20" width="100" height="20" uuid="f692f5fd-486b-464c-9244-4a5145eed65c"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATE]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="2" y="0" width="100" height="20" uuid="4e81d2c0-d612-457e-8d7e-f1883bb61f04"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUPNME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="113" y="20" width="100" height="20" uuid="594c4099-8006-4f41-8fd2-8eb7c045e086"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[ITEM CODE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="233" y="20" width="100" height="20" uuid="291b0184-e865-4745-853b-a12db539e822"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCRIPTION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="455" y="20" width="100" height="20" uuid="e094fa23-e1a0-4b05-af3e-3f76492de264"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[QUANTITY]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="218" height="20" uuid="e8013f32-703b-4729-ad44-d17ea473839b"/>
+				<textElement>
+					<font fontName="Century Gothic" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DELIVERY FOR MANILA (DS)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="20" width="63" height="20" uuid="f25de93a-2097-4b5c-b123-da217bc9dd03"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUN TIME:]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="65" y="20" width="114" height="20" uuid="ad0a5fcd-da91-41fe-b103-ab1c7a3eced4"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="h.mm a">
+				<reportElement x="179" y="20" width="100" height="20" uuid="803f6e54-67e4-4418-b2aa-b7e2dea41ab6"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="113" y="0" width="100" height="20" uuid="9068cfb3-4e1a-43f0-bff6-0c7e34179d21"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITMCOD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="412" y="0" width="143" height="20" uuid="f80ac1b1-f09d-480b-85af-1114695cf22a"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUM(B.QTY)}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="233" y="0" width="179" height="20" uuid="5ef51a6c-ec9c-4ea1-a0a9-1f8f609245d0"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement x="2" y="0" width="100" height="20" uuid="c5f3dbcf-5c43-4bea-932f-593f90b3c21a"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DRDATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="21" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="213" y="3" width="80" height="20" uuid="16f656a8-6ebd-43f9-a76a-cd9fb8034cac"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="293" y="3" width="40" height="20" uuid="a2f2a55b-59bd-4a80-bf74-94d82560f0b5"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="54" splitType="Stretch"/>
+	</summary>
+</jasperReport>
