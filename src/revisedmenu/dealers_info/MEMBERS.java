@@ -7,6 +7,7 @@ package revisedmenu.dealers_info;
 
 
 
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -23,9 +25,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import revisedmenu.Home;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import revisedmenu.OracleSqlConnect;
-import revisedmenu.users.USER_ACCESS;
+
 
 
 /**
@@ -40,15 +45,17 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
        s_piba, s_piba1, s_datepiba, s_idpcard, s_payout, s_payout1, s_banktrans, s_blocked, s_blocked1, s_term, s_term1, s_dtb, s_dealcat, s_team, s_mh,
        s_sex, s_om, s_omdeal, s_fm, s_fmdeal, s_known, s_nationality, s_civilstat, s_tnumber, s_offphone, s_profession,
        s_tin, s_mobphone, s_altphone, s_email, s_altemail, s_legacy, s_loyal, s_autorev, s_autoship, s_fmnominated, s_omnominated,
-       s_isas, s_packagedate, s_rem, s_remlegal, s_hofcateg, s_aegexpdate;
- Date Date_Plus, Date_Q, Date_Birth, Date_Max, Date_Exp, Date_Act, Date_Inc, Date_Piba, Date_DTB, Date_ISAS;
-
+       s_isas, s_packagedate, s_rem, s_remlegal, s_hofcateg, s_aegexpdate, s_dplusdate;
+ Date Date_Plus, Date_DPlus, Date_Q, Date_Birth, Date_Max, Date_Exp, Date_Act, Date_Inc, Date_Piba, Date_DTB, Date_ISAS;
   int nCnt = 0;
-  int  s_civilstat1, s_dealcat1, s_grp1 ;
+  int s_grp1 ;
+  Integer s_dealcat1  = null;
+  Integer s_civilstat1  = null;
     public MEMBERS() {
         initComponents();
   
-  
+
+        
     JTextField[] textFields = {
         txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP, 
         txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2, 
@@ -276,6 +283,12 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         jLabel9.setText("BA NUMBER");
+
+        txtPlus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPlusActionPerformed(evt);
+            }
+        });
 
         txtMax.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -761,7 +774,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
         jPanel16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         cLegacy.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        cLegacy.setText("Is Legay");
+        cLegacy.setText("IS Legacy");
 
         cLoyal.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         cLoyal.setText("Is Loyal");
@@ -1173,11 +1186,6 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
         });
 
         Cashier.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        Cashier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CashierActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1186,16 +1194,6 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(274, 274, 274)
-                        .addComponent(SAVE, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(CLEAR, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(119, 119, 119)
-                        .addComponent(Cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1203,8 +1201,8 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                                 .addComponent(jLabel1))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3))
+                                .addComponent(jLabel3)
+                                .addComponent(txtAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(txtIpac, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1273,7 +1271,18 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                             .addGap(12, 12, 12)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(50, 50, 50)
-                        .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(274, 274, 274)
+                            .addComponent(SAVE, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(CLEAR, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(Cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(panel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(5, 5, 5))
         );
         layout.setVerticalGroup(
@@ -1404,9 +1413,11 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
 
     private void txtBAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBAActionPerformed
         Connection conn_obj = OracleSqlConnect.ConnectDB();       
-        SimpleDateFormat date_plus = new SimpleDateFormat("dd-MMM-yyyy");
-        SimpleDateFormat date_birth = new SimpleDateFormat("dd-MMM-yyyy");
-        SimpleDateFormat date_max = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat date_plus = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat date_birth = new SimpleDateFormat("MM-dd-YYYY", Locale.ENGLISH);
+        SimpleDateFormat date_max = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        
+     
         s_ba = String.format("%8s",txtBA.getText());
         s_ba = s_ba.replace(' ','0');
         txtBA.setText(s_ba);
@@ -1417,670 +1428,682 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                  + "FROM DEV.MEMBER1 M1 "
                  + "INNER JOIN MEMBER3 M3 ON M1.IDNO = M3.IDNO "
                  + "WHERE M1.IDNO= '"+s_ba+"'";
-         PreparedStatement stmt_search = conn_obj.prepareStatement(search_sql);
-         ResultSet rs_search = stmt_search.executeQuery(); 
-                 
-           int a = 0;
-           while(rs_search.next()){
-            a++;
-            
-            s_ba = rs_search.getString("IDNO");
-            s_origin = rs_search.getString("ORGN");
-            s_account = rs_search.getString("ACCT_CATEG");
-            s_ipac = rs_search.getString("IAP");
-            s_psol = rs_search.getString("ISPSOL");
-            s_replace = rs_search.getString("CATEG");
-            Date_Plus = rs_search.getDate("PLUSDATE");
-            if(Date_Plus == null)
-                {
-                    s_plus = "";
+            try (PreparedStatement stmt_search = conn_obj.prepareStatement(search_sql); ResultSet rs_search = stmt_search.executeQuery()) {
+                
+                int a = 0;
+                while(rs_search.next()){
+                    a++;
+                    
+                    s_ba = rs_search.getString("IDNO");
+                    s_origin = rs_search.getString("ORGN");
+                    s_account = rs_search.getString("ACCT_CATEG");
+                    s_ipac = rs_search.getString("IAP");
+                    s_psol = rs_search.getString("ISPSOL");
+                    s_replace = rs_search.getString("CATEG");
+                    Date_Plus = rs_search.getDate("PLUSDATE");
+                    if(Date_Plus == null)
+                    {
+                        s_plus = "";
+                    }
+                    else
+                    {
+                        
+                        s_plus = date_plus.format(Date_Plus);
+                        s_plus = s_plus.toUpperCase();
+                    }
+                    Date_Q = rs_search.getDate("MDATE");
+                    if(Date_Q == null)
+                    {
+                        s_qdate = "";
+                    }
+                    else{
+                        s_qdate = date_plus.format(Date_Q);
+                        s_qdate = s_qdate.toUpperCase();
+                    }
+                    s_upline = rs_search.getString("UPLNO");
+                    s_sponsor = rs_search.getString("SPNO");
+                    s_plusponsor = rs_search.getString("SPNOPLUS");
+                    s_sur1 = rs_search.getString("SNAME");
+                    s_fname1 = rs_search.getString("FNAME");
+                    s_m1 = rs_search.getString("MNAME");       
+                    s_namecheck = rs_search.getString("CHK_RECIP");
+                    s_home = rs_search.getString("HOMEADD");
+                    s_business = rs_search.getString("BUSADD");
+                    s_recip = rs_search.getString("RECIP");
+                    s_powerby = rs_search.getString("PLUSPACK_REC");
+                    s_maxup = rs_search.getString("MAXUP_CLAIMEDBY");
+                    s_ga = rs_search.getString("GRP");
+                    Date_Birth = rs_search.getDate("BDATE");
+                    if(Date_Birth == null)
+                    {
+                        s_bdate = "";
+                    }
+                    else
+                    {
+                        s_bdate = date_birth.format(Date_Birth);
+                        s_bdate = s_bdate.toUpperCase();
+                    }
+                    s_ppack = rs_search.getString("ISPLUSPACK");
+                    s_maxstats = rs_search.getString("MAXSTAT");
+                    Date_Max = rs_search.getDate("MAXUPDATE");
+                    if(Date_Max == null)
+                    {
+                        s_maxdate = "";
+                    }
+                    else
+                    {
+                        s_maxdate = date_max.format(Date_Max);
+                        s_maxdate = s_maxdate.toUpperCase();
+                    }
+                    Date_Exp = rs_search.getDate("MAXUP_EXPDATE");
+                    if(Date_Exp == null)
+                    {
+                        s_expdate = "";
+                    }
+                    else
+                    {
+                        s_expdate = date_max.format(Date_Exp);
+                        s_expdate = s_expdate.toUpperCase();
+                    }
+                    s_stats = rs_search.getString("ISACTIVE_PLUS");
+                    Date_Act = rs_search.getDate("DTE_ACTIVE");
+                    if(Date_Act == null)
+                    {
+                        s_actdate = "";
+                    }
+                    else
+                    {
+                        s_actdate = date_max.format(Date_Act);
+                        s_actdate =  s_actdate.toUpperCase();
+                    }
+                    Date_Inc = rs_search.getDate("DTE_INACTIVE");
+                    if(Date_Inc == null)
+                    {
+                        s_incdate = "";
+                    }
+                    else
+                    {
+                        s_incdate = date_max.format(Date_Inc);
+                        s_incdate =  s_incdate.toUpperCase();
+                    }
+                    s_piba = rs_search.getString("ISPIBA");
+                    Date_Piba = rs_search.getDate("DTE_PIBA");
+                    if(Date_Piba == null)
+                    {
+                        s_datepiba= "";
+                    }
+                    else
+                    {
+                        s_datepiba = date_max.format(Date_Piba);
+                        s_datepiba =  s_datepiba.toUpperCase();
+                    }
+                    s_idpcard = rs_search.getString("IDNO_POWERCARD");
+                    s_payout = rs_search.getString("PAYOUT");
+                    s_banktrans = rs_search.getString("ISBANK_TRANSFER_OK");
+                    s_blocked = rs_search.getString("ISBLOCK");
+                    s_term = rs_search.getString("ISTERMINATED");
+                    Date_DTB = rs_search.getDate("DTE_TERMINATED");
+                    if(Date_DTB == null)
+                    {
+                        s_dtb= "";
+                    }
+                    else
+                    {
+                        s_dtb = date_max.format(Date_DTB);
+                        s_dtb =  s_dtb.toUpperCase();
+                    }
+                    s_dealcat = rs_search.getString("IMOVE");
+                    s_team = rs_search.getString("TEAM");
+                    s_mh = rs_search.getString("MH_ACCT");
+                    s_sex = rs_search.getString("SEX");
+                    s_om = rs_search.getString("ISPA_SPONSOR");
+                    s_omdeal = rs_search.getString("ISOM_DEALER");
+                    s_fm = rs_search.getString("ISFM_SPONSOR");
+                    s_fmdeal = rs_search.getString("ISFM_DEALER");
+                    s_known = rs_search.getString("KNOWNUPLINE");
+                    s_nationality = rs_search.getString("NATION");
+                    s_civilstat = rs_search.getString("CSTAT");
+                    s_tnumber = rs_search.getString("HOMPHON");
+                    s_offphone = rs_search.getString("OFFPHON");
+                    s_profession = rs_search.getString("PROF");
+                    s_tin = rs_search.getString("TIN");
+                    s_mobphone = rs_search.getString("MOBPHON");
+                    s_altphone = rs_search.getString("MOBPHON2");
+                    s_email = rs_search.getString("EMAIL_ADD");
+                    s_altemail = rs_search.getString("EMAIL_ADD2");
+                    s_legacy = rs_search.getString("ISLEGACY");
+                    s_loyal = rs_search.getString("ISLOYAL");
+                    s_autoship = rs_search.getString("ISAUTOSHIP");
+                    s_autorev = rs_search.getString("ISAUTOSHIP_REVUP");
+                    s_omnominated = rs_search.getString("ISOM_NOMINATED");
+                    s_fmnominated = rs_search.getString("ISFM_NOMINATED");
+                    s_isas = rs_search.getString("IS_SAS");
+                    Date_ISAS = rs_search.getDate("IPACKAGE_DTE");
+                    if(Date_ISAS == null)
+                    {
+                        s_packagedate= "";
+                    }
+                    else
+                    {
+                        s_packagedate = date_max.format(Date_ISAS);
+                        s_packagedate =  s_packagedate.toUpperCase();
+                    }
+                    s_rem = rs_search.getString("REM");
+                    
+                    
                 }
-                else
-                {
-                   s_plus = date_plus.format(Date_Plus);
-                }
-            Date_Q = rs_search.getDate("MDATE");
-            if(Date_Q == null)
-            {
-                s_qdate = "";
-            }
-            else{
-                s_qdate = date_plus.format(Date_Q);        
-                }
-             s_upline = rs_search.getString("UPLNO");
-             s_sponsor = rs_search.getString("SPNO");
-             s_plusponsor = rs_search.getString("SPNOPLUS");
-             s_sur1 = rs_search.getString("SNAME");
-             s_fname1 = rs_search.getString("FNAME");
-             s_m1 = rs_search.getString("MNAME");
-            
-             s_namecheck = rs_search.getString("CHK_RECIP");
-             s_home = rs_search.getString("HOMEADD");
-             s_business = rs_search.getString("BUSADD");
-             s_recip = rs_search.getString("RECIP");
-             s_powerby = rs_search.getString("PLUSPACK_REC");
-             s_maxup = rs_search.getString("MAXUP_CLAIMEDBY");
-             s_ga = rs_search.getString("GRP");
-             Date_Birth = rs_search.getDate("BDATE");
-             if(Date_Birth == null)
-                {
-                    s_bdate = "";
-                }
-                else
-                {
-                   s_bdate = date_birth.format(Date_Birth);
-                }
-             s_ppack = rs_search.getString("ISPLUSPACK");
-             s_maxstats = rs_search.getString("MAXSTAT");
-             Date_Max = rs_search.getDate("MAXUPDATE");
-             if(Date_Max == null)
-                {
-                    s_maxdate = "";
-                }
-                else
-                {
-                    s_maxdate = date_max.format(Date_Max);
-                }
-             Date_Exp = rs_search.getDate("MAXUP_EXPDATE");
-               if(Date_Exp == null)
-                {
-                    s_expdate = "";
-                }
-                else
-                {
-                   s_expdate = date_max.format(Date_Exp);
-                }
-               s_stats = rs_search.getString("ISACTIVE_PLUS");
-                Date_Act = rs_search.getDate("DTE_ACTIVE");
-             if(Date_Act == null)
-                {
-                    s_actdate = "";
-                }
-                else
-                {
-                    s_actdate = date_max.format(Date_Act);
-                }
-              Date_Inc = rs_search.getDate("DTE_INACTIVE");
-             if(Date_Inc == null)
-                {
-                    s_incdate = "";
-                }
-                else
-                {
-                    s_incdate = date_max.format(Date_Inc);
-                }
-               s_piba = rs_search.getString("ISPIBA");
-               Date_Piba = rs_search.getDate("DTE_PIBA");
-             if(Date_Piba == null)
-                {
-                    s_datepiba= "";
-                }
-                else
-                {
-                    s_datepiba = date_max.format(Date_Piba);
-                }
-               s_idpcard = rs_search.getString("IDNO_POWERCARD");
-               s_payout = rs_search.getString("PAYOUT");
-               s_banktrans = rs_search.getString("ISBANK_TRANSFER_OK"); 
-               s_blocked = rs_search.getString("ISBLOCK");
-               s_term = rs_search.getString("ISTERMINATED");        
-               Date_DTB = rs_search.getDate("DTE_TERMINATED");
-             if(Date_DTB == null)
-                {
-                    s_dtb= "";
-                }
-                else
-                {
-                    s_dtb = date_max.format(Date_DTB);
-                }
-                s_dealcat = rs_search.getString("IMOVE");
-                s_team = rs_search.getString("TEAM");
-                s_mh = rs_search.getString("MH_ACCT");
-                s_sex = rs_search.getString("SEX");
-                s_om = rs_search.getString("ISPA_SPONSOR");
-                s_omdeal = rs_search.getString("ISOM_DEALER");
-                s_fm = rs_search.getString("ISFM_SPONSOR");
-                s_fmdeal = rs_search.getString("ISFM_DEALER");
-                s_known = rs_search.getString("KNOWNUPLINE");
-                s_nationality = rs_search.getString("NATION"); 
-                s_civilstat = rs_search.getString("CSTAT"); 
-                s_tnumber = rs_search.getString("HOMPHON");
-                s_offphone = rs_search.getString("OFFPHON");
-                s_profession = rs_search.getString("PROF");
-                s_tin = rs_search.getString("TIN");
-                s_mobphone = rs_search.getString("MOBPHON");
-                s_altphone = rs_search.getString("MOBPHON2");
-                s_email = rs_search.getString("EMAIL_ADD");
-                s_altemail = rs_search.getString("EMAIL_ADD2");
-                s_legacy = rs_search.getString("ISLEGACY");
-                s_loyal = rs_search.getString("ISLOYAL");
-                s_autoship = rs_search.getString("ISAUTOSHIP");
-                s_autorev = rs_search.getString("ISAUTOSHIP_REVUP");
-                s_omnominated = rs_search.getString("ISOM_NOMINATED");
-                s_fmnominated = rs_search.getString("ISFM_NOMINATED");
-                s_isas = rs_search.getString("IS_SAS");
-                Date_ISAS = rs_search.getDate("IPACKAGE_DTE");
-                if(Date_ISAS == null)
-                {
-                    s_packagedate= "";
-                }
-                else
-                {
-                   s_packagedate = date_max.format(Date_ISAS);
-                }
-                s_rem = rs_search.getString("REM");
                 
                 
-                }  
-               
-            
-          //IF ELSE DISPLAY THE DIFFERENT NAME VALUES IN SQL, INSERT STRING SQL INSIDE THE FIRST ELSE AFTER IF// 
-           if (s_ba.length() == 0 || s_ba.equals("00000000")){  
-                 JTextField[] textFields = {
-                    txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP, 
-                    txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2, 
-                    txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
-                    txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
-                    txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
-                    txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
-                    txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage, 
-                    txtRemarks, txtLegal
-
+                //IF ELSE DISPLAY THE DIFFERENT NAME VALUES IN SQL, INSERT STRING SQL INSIDE THE FIRST ELSE AFTER IF//
+                if (s_ba.length() == 0 || s_ba.equals("00000000")){
+                    JTextField[] textFields = {
+                        txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP,
+                        txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2,
+                        txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
+                        txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
+                        txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
+                        txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
+                        txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage,
+                        txtRemarks, txtLegal
+                            
                     };
                     for (JTextField textField : textFields) {
                         textField.setText("");
                         textField.setEditable(false);
-                     }
-                   JCheckBox[] checkboxes = {
-                    cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
-                    cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
-                           
+                    }
+                    JCheckBox[] checkboxes = {
+                        cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
+                        cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
+                            
                     };
                     for (JCheckBox checkbox : checkboxes) {
                         checkbox.setSelected(false);
                         checkbox.setEnabled(false);
                     }
-                   JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
-
+                    JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
+                    
                     for (JRadioButton radioButton : radioButtons) {
                         radioButton.setSelected(false);
                         radioButton.setEnabled(false);
-                    } 
-                  
+                    }
+                    
                     comCivil.setSelectedItem(null); 
                     comCivil.setEnabled(false);
                     
                     
                     txtBA.setText("");
-                   JOptionPane.showMessageDialog(null, "Input BA.","Error", JOptionPane.INFORMATION_MESSAGE);           
-           }
-           else{
-               
-           if(a > 0){   
-           txtBA.setText(s_ba);
-           txtOrigin.setText(s_origin);
-           txtAccount.setText(s_account);
-           if("V".equals(s_ipac)){
-              txtIpac.setText("V");
-           }else if("C".equals(s_ipac)){
-              txtIpac.setText("C");
-           }else if("E".equals(s_ipac)){
-              txtIpac.setText("E");
-           }else{
-            txtIpac.setText(null);
-           }
-           txtPSOL.setText(s_psol);
-           txtReplace.setText(s_replace);
-           txtPlus.setText(s_plus);
-           txtQdate.setText(s_qdate);
-           txtUP.setText(s_upline);
-           txtSponsor.setText(s_sponsor);
-           txtPsponsor.setText(s_plusponsor);
-           txtsur1.setText(s_sur1);
-           txtFirst1.setText(s_fname1);
-           txtMiddle1.setText(s_m1);
-           txtAppear.setText(s_namecheck);
-           txtHome.setText(s_home);
-           txtBusiness.setText(s_business);
-           txtReciept.setText(s_recip);
-           txtPower.setText(s_powerby);
-           txtMax.setText(s_maxup);
-           if("1".equals(s_ga)) {
-              rGroupA.setSelected(true);
-                 } 
-           else{
-             rGroupA.setSelected(false);
-           }
-           if("2".equals(s_ga)) {
-             rGroupB.setSelected(true);
-                 }
-           else{
-             rGroupB.setSelected(false);
-           }
-           txtBirth.setText(s_bdate);  
-           if("T".equals(s_ppack)){
-            txtPPack.setText("CLAIMED");
-           }
-           else{
-              txtPPack.setText(null);  
-           }
-           
-           if("T".equals(s_maxstats)){
-            txtmaxStats.setText("ACTIVE");
-           }
-           else if("F".equals(s_maxstats)){
-              txtmaxStats.setText("PIMUP");  
-           }
-           else if("R".equals(s_maxstats)){
-              txtmaxStats.setText("INACTIVE");  
-           }
-           else if("N".equals(s_maxstats)){
-              txtmaxStats.setText("NOT APPLICABLE");  
-           }
-           else{
-             txtmaxStats.setText(null);
-           }
-           txtmaxDate.setText(s_maxdate);
-           txtexpDate.setText(s_expdate);
-           if("T".equals(s_stats)){
-            txtStatus.setText("ABA");
-           }
-           else if("F".equals(s_stats)){
-            txtStatus.setText("IBA");  
-           }
-           else{
-            txtStatus.setText(null);
-           }
-           txtdateAct.setText(s_actdate);
-           txtdateInact.setText(s_incdate);
-           if("T".equals(s_piba)){
-            txtPiba.setText("PIBA");
-           }
-           else{
-             txtPiba.setText(null);
-           }
-          txtdatePiba.setText(s_datepiba);
-          txtidPower.setText(s_idpcard);
-          if("R".equals(s_payout)){
-              if(s_banktrans == null || "F".equals(s_banktrans)){
-                   txtPayout.setText("POWERWALLET");
-                }else{
-                   txtPayout.setText("BANK AUTOCREDIT");
-                     }
-                      }else{
-                         txtPayout.setText("WEEKLY CHECK");
-                       }
-          if("T".equals(s_blocked) && "T".equals(s_term)){
-              txtBlocked.setText("BLOCKED");
-              txtTerminated.setText("TERMINATED");
-                }else if ("T".equals(s_blocked) && ("F".equals(s_term) || s_term == null || " ".equals(s_term))){
-                             txtBlocked.setText("BLOCKED");
-                               txtTerminated.setText(null);
-                   }else if ("F".equals(s_blocked)|| " ".equals(s_blocked) || s_blocked == null
-                               && ("F".equals(s_term) || s_term == null || " ".equals(s_term))){
-                                    txtBlocked.setText(null);
-                                           txtTerminated.setText(null);
-                             }else if (" ".equals(s_blocked) || s_blocked == null ||"F".equals(s_blocked) 
-                                     && (" ".equals(s_term) || s_term == null || "F".equals(s_term))){
-                                            txtBlocked.setText(null);
-                                                  txtTerminated.setText(null);
-                                               }
-            txtdateTermBlock.setText(s_dtb);                     
-            if("0".equals(s_dealcat)){
-                txtDealer.setText("Online Local");  
-                 }else if("1".equals(s_dealcat)){
-                    txtDealer.setText("iMove Operator");  
-                      }else if("2".equals(s_dealcat)){
-                        txtDealer.setText("Move Operator");  
-                        }else if("3".equals(s_dealcat)){
-                           txtDealer.setText("APPP");  
-                             }else if("5".equals(s_dealcat)){
-                                    txtDealer.setText("Air Mover");  
-                                      }else if("6".equals(s_dealcat)){
-                                        txtDealer.setText("iMove Dealer");  
-                                        }else if("7".equals(s_dealcat)){
-                                           txtDealer.setText("Move Dealer");  
-                                            }else if("8".equals(s_dealcat)){
-                                                txtDealer.setText("Move Online Dealer");  
-                                                }else if("9".equals(s_dealcat)){
-                                                    txtDealer.setText("Online INTL");  
-                                                      }else if("10".equals(s_dealcat)){
-                                                        txtDealer.setText("Online INTL-PW");  
-                                                             }else if("11".equals(s_dealcat)){
-                                                                 txtDealer.setText("Online LOCAL-PW");  
-                                                                    }else{
-                                                                       txtDealer.setText("REGULAR");  
-                                                                       }   
-            txtTeam.setText(s_team);
-            txtMH.setText(s_mh);
-            if("1".equals(s_sex)) {
-              rsexM.setSelected(true);
-                 } 
-            else{
-             rsexM.setSelected(false);
-              }
-            if("2".equals(s_sex)) {
-              rsexF.setSelected(true);
-                 } 
-            else{
-             rsexF.setSelected(false);
-               }
-            if ("T".equals(s_om)) {
-               cOM.setSelected(true);
+                    JOptionPane.showMessageDialog(null, "Input BA.","Error", JOptionPane.INFORMATION_MESSAGE);
                 }
-            else {
-                cOM.setSelected(false);
-                }
-             if ("T".equals(s_omdeal)) {
-               comDealer.setSelected(true);
-                }
-            else {
-                comDealer.setSelected(false);
-                }
-            if ("T".equals(s_fm)) {
-               cFM.setSelected(true);
-                }
-            else {
-               cFM.setSelected(false);
-                }
-            if ("T".equals(s_fmdeal)) {
-               cfmDealer.setSelected(true);
-                }
-            else {
-               cfmDealer.setSelected(false);
-                }
-            txtKnown.setText(s_known);
-            txtNationality.setText(s_nationality);
-            if("1".equals(s_civilstat)){
-             comCivil.setSelectedItem("SINGLE");
-            }
-            else if("2".equals(s_civilstat)){
-             comCivil.setSelectedItem("MARRIED");
-            }
-            else if("3".equals(s_civilstat)){
-             comCivil.setSelectedItem("WIDOW");
-            }
-            else if("4".equals(s_civilstat)){
-             comCivil.setSelectedItem(null);
-            }
-            else{
-             comCivil.setSelectedItem(null);
-            }
-            txtTelnum.setText(s_tnumber);
-            txtOffice.setText(s_offphone);
-            txtProf.setText(s_profession);
-            txtTIN.setText(s_tin);
-            txtMobile.setText(s_mobphone);
-            txtAltnum.setText(s_altphone);
-            txtEmail.setText(s_email);
-            txtAltemail.setText(s_altemail);
-            if("T".equals(s_loyal)) {
-             cLoyal.setSelected(true);
-                 } 
-            else{
-             cLoyal.setSelected(false);
-              }
-            if("T".equals(s_legacy)) {
-             cLegacy.setSelected(true);
-                 } 
-            else{
-             cLegacy.setSelected(false);
-              }
-            if("T".equals(s_autorev)) {
-             cAutoshiprev.setSelected(true);
-                 } 
-            else{
-             cAutoshiprev.setSelected(false);
-              }
-            if("T".equals(s_autoship)) {
-             cautoLegacy.setSelected(true);
-                 } 
-            else{
-             cautoLegacy.setSelected(false);
-              }
-            if("T".equals(s_fmnominated)) {
-             cFMnominated.setSelected(true);
-                 } 
-            else{
-             cFMnominated.setSelected(false);
-              }
-            if("T".equals(s_omnominated)) {
-             cOMnominated.setSelected(true);
-                 } 
-            else{
-             cOMnominated.setSelected(false);
-              }
-            if("T".equals(s_isas)) {
-              cSAS.setSelected(true);
-                 } 
-            else{
-              cSAS.setSelected(false);
-              } 
-            txtPackage.setText(s_packagedate);
-            txtRemarks.setText(s_rem);
-            
-
-        if(s_upline == null){
-            txtsur2.setText(null);
-            txtFirst2.setText(null);
-            txtMiddle2.setText(null);
-           }
-           else{
-                 String search_sql2 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_upline+"'";
-                 PreparedStatement stmt_search2 = conn_obj.prepareStatement(search_sql2); 
-                 ResultSet rs_search2 = stmt_search2.executeQuery();
-                 int b = 0;
-                 while(rs_search2.next()){
-                     b++;
-                     
-                     s_upline = rs_search2.getString("UPLNO");
-                     s_sur2 = rs_search2.getString("SNAME");
-                     s_fname2 = rs_search2.getString("FNAME");
-                     s_m2 = rs_search2.getString("MNAME");
-                 }
-                 
-                 if(b > 0){
-                     txtsur2.setText(s_sur2);
-                     txtFirst2.setText(s_fname2);
-                     txtMiddle2.setText(s_m2);
-                 }
-                }
-           if(s_sponsor == null){
-            txtsur3.setText(null);
-            txtFirst3.setText(null);
-            txtMiddle3.setText(null);
-           }
-           else{
-             
-                 String search_sql3 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_sponsor+"'";
-                 PreparedStatement stmt_search3 = conn_obj.prepareStatement(search_sql3); 
-                 ResultSet rs_search3 = stmt_search3.executeQuery();
-                 int c = 0;
-                 while(rs_search3.next()){
-                     c++;
-                     
-                     s_sponsor = rs_search3.getString("SPNO");
-                     s_sur3 = rs_search3.getString("SNAME");
-                     s_fname3 = rs_search3.getString("FNAME");
-                     s_m3 = rs_search3.getString("MNAME");
-                 }
-                 
-                 if(c > 0){
-                     txtsur3.setText(s_sur3);
-                     txtFirst3.setText(s_fname3);
-                     txtMiddle3.setText(s_m3);
-                 }
-             }
-           if(s_plusponsor == null){
-            txtsur4.setText(null);
-            txtFirst4.setText(null);
-            txtMiddle4.setText(null);
-           }
-           else{
-                 String search_sql4 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_plusponsor+"'";
-                 PreparedStatement stmt_search4 = conn_obj.prepareStatement(search_sql4); 
-                 ResultSet rs_search4 = stmt_search4.executeQuery();
-                 int d = 0;
-                 while(rs_search4.next()){
-                     d++;
-                     
-                     s_plusponsor = rs_search4.getString("SPNO");
-                     s_sur4 = rs_search4.getString("SNAME");
-                     s_fname4 = rs_search4.getString("FNAME");
-                     s_m4 = rs_search4.getString("MNAME");
-                 }
-                 
-                 if(d > 0){
-                     txtsur4.setText(s_sur4);
-                     txtFirst4.setText(s_fname4);
-                     txtMiddle4.setText(s_m4);
-                 }
-                }
-            if (!txtBA.getText().isEmpty()) {
-                String search_sql5 = "SELECT * FROM ORPAID WHERE IDNO = '"+s_ba+"'"
-                + "AND TRNSCT NOT IN (10, 78, 47, 48, 49, 172)"
-                + "AND ISCANCEL = 'F'";
-                PreparedStatement stmt_search5 = conn_obj.prepareStatement(search_sql5);
-                ResultSet rs_search5 = stmt_search5.executeQuery();
-                 int e = 0;
-                 while(rs_search5.next()){
-                     e++;  
-                     s_newdeal = rs_search5.getString("NEW_DEALER");    
-                     }
-                    if (e > 0) {
-                   
-                    if ("T".equals(s_newdeal)) {
-                        cNewdealer.setSelected(true);
-                    } 
-                    else {
-                        cNewdealer.setSelected(false);
-                    }               
-                }
-                }
-                else if("F".equals(s_isas) || s_isas == null){
-                         cNewdealer.setSelected(false);
-                      }
                 else{
-                     cNewdealer.setSelected(false);
-                }
-            
-             if(!txtBA.getText().isEmpty()){
-                String countQuery = "SELECT COUNT(1) FROM  HALL_OF_FAMER WHERE idno = ?";
-                PreparedStatement countStatement = conn_obj.prepareStatement(countQuery);
-                countStatement.setString(1, s_ba);
-                ResultSet countResult = countStatement.executeQuery();
-             
-                if (countResult.next()) {
-                    nCnt = countResult.getInt(1);
-                } 
-                 if (nCnt > 0) {
-              
-                String categoryQuery1 = "SELECT CATEG FROM HALL_OF_FAMER WHERE idno = ?";
-                PreparedStatement categoryStatement = conn_obj.prepareStatement(categoryQuery1);
-                categoryStatement.setString(1, s_ba); 
-                ResultSet categoryResult = categoryStatement.executeQuery();
-               
-                if (categoryResult.next()) {
-                    s_hofcateg = categoryResult.getString("CATEG");
-                }
-                   if (!"MOVE".equals(s_hofcateg) && s_hofcateg != null) {
-                       txtDealer.setText(s_hofcateg);
-                        if ("REGULAR".equals(s_hofcateg)) {
-                             txtDealer.setText(s_hofcateg);
+                    
+                    if(a > 0){
+                        txtBA.setText(s_ba);
+                        txtOrigin.setText(s_origin);
+                        txtAccount.setText(s_account);
+                        if("V".equals(s_ipac)){
+                            txtIpac.setText("V");
+                        }else if("C".equals(s_ipac)){
+                            txtIpac.setText("C");
+                        }else if("E".equals(s_ipac)){
+                            txtIpac.setText("E");
                         }else{
-                            txtDealer.setText(s_dealcat+"/"+ s_hofcateg);
-                        } 
-                }             
+                            txtIpac.setText(null);
+                        }
+                        txtPSOL.setText(s_psol);             
+                        txtReplace.setText(s_replace);
+                        txtPlus.setText(s_plus);
+                        txtQdate.setText(s_qdate);
+                        txtUP.setText(s_upline);
+                        txtSponsor.setText(s_sponsor);
+                        txtPsponsor.setText(s_plusponsor);
+                        txtsur1.setText(s_sur1);
+                        txtFirst1.setText(s_fname1);
+                        txtMiddle1.setText(s_m1);
+                        txtAppear.setText(s_namecheck);
+                        txtHome.setText(s_home);
+                        txtBusiness.setText(s_business);
+                        txtReciept.setText(s_recip);
+                        txtPower.setText(s_powerby);
+                        txtMax.setText(s_maxup);
+                        if("1".equals(s_ga)) {
+                            rGroupA.setSelected(true);
+                        }
+                        else{
+                            rGroupA.setSelected(false);
+                        }
+                        if("2".equals(s_ga)) {
+                            rGroupB.setSelected(true);
+                        }
+                        else{
+                            rGroupB.setSelected(false);
+                        }
+                        txtBirth.setText(s_bdate);
+                        if("T".equals(s_ppack)){
+                            txtPPack.setText("CLAIMED");
+                        }
+                        else{
+                            txtPPack.setText(null);
+                        }
+                        
+                        if("T".equals(s_maxstats)){
+                            txtmaxStats.setText("ACTIVE");
+                        }
+                        else if("F".equals(s_maxstats)){
+                            txtmaxStats.setText("PIMUP");
+                        }
+                        else if("R".equals(s_maxstats)){
+                            txtmaxStats.setText("INACTIVE");
+                        }
+                        else if("N".equals(s_maxstats)){
+                            txtmaxStats.setText("NOT APPLICABLE");
+                        }
+                        else{
+                            txtmaxStats.setText(null);
+                        }
+                        txtmaxDate.setText(s_maxdate);
+                        txtexpDate.setText(s_expdate);
+                        if("T".equals(s_stats)){
+                            txtStatus.setText("ABA");
+                        }
+                        else if("F".equals(s_stats)){
+                            txtStatus.setText("IBA");
+                        }
+                        else{
+                            txtStatus.setText(null);
+                        }
+                        txtdateAct.setText(s_actdate);
+                        txtdateInact.setText(s_incdate);
+                        if("T".equals(s_piba)){
+                            txtPiba.setText("PIBA");
+                        }
+                        else{
+                            txtPiba.setText(null);
+                        }
+                        txtdatePiba.setText(s_datepiba);
+                        txtidPower.setText(s_idpcard);
+                        if("R".equals(s_payout)){
+                            if(s_banktrans == null || "F".equals(s_banktrans)){
+                                txtPayout.setText("POWERWALLET");
+                            }else{
+                                txtPayout.setText("BANK AUTOCREDIT");
+                            }
+                        }else{
+                            txtPayout.setText("WEEKLY CHECK");
+                        }
+                        if("T".equals(s_blocked) && "T".equals(s_term)){
+                            txtBlocked.setText("BLOCKED");
+                            txtTerminated.setText("TERMINATED");
+                        }else if ("T".equals(s_blocked) && ("F".equals(s_term) || s_term == null || " ".equals(s_term))){
+                            txtBlocked.setText("BLOCKED");
+                            txtTerminated.setText(null);
+                        }else if ("F".equals(s_blocked)|| " ".equals(s_blocked) || s_blocked == null
+                                && ("F".equals(s_term) || s_term == null || " ".equals(s_term))){
+                            txtBlocked.setText(null);
+                            txtTerminated.setText(null);
+                        }else if (" ".equals(s_blocked) || s_blocked == null ||"F".equals(s_blocked)
+                                && (" ".equals(s_term) || s_term == null || "F".equals(s_term))){
+                            txtBlocked.setText(null);
+                            txtTerminated.setText(null);
+                        }
+                        txtdateTermBlock.setText(s_dtb);
+                        if("0".equals(s_dealcat)){
+                            txtDealer.setText("Online Local");
+                        }else if("1".equals(s_dealcat)){
+                            txtDealer.setText("iMove Operator");
+                        }else if("2".equals(s_dealcat)){
+                            txtDealer.setText("Move Operator");
+                        }else if("3".equals(s_dealcat)){
+                            txtDealer.setText("APPP");
+                        }else if("5".equals(s_dealcat)){
+                            txtDealer.setText("Air Mover");
+                        }else if("6".equals(s_dealcat)){
+                            txtDealer.setText("iMove Dealer");
+                        }else if("7".equals(s_dealcat)){
+                            txtDealer.setText("Move Dealer");
+                        }else if("8".equals(s_dealcat)){
+                            txtDealer.setText("Move Online Dealer");
+                        }else if("9".equals(s_dealcat)){
+                            txtDealer.setText("Online INTL");
+                        }else if("10".equals(s_dealcat)){
+                            txtDealer.setText("Online INTL-PW");
+                        }else if("11".equals(s_dealcat)){
+                            txtDealer.setText("Online LOCAL-PW");
+                        }else{
+                            txtDealer.setText("REGULAR");
+                        }
+                        txtTeam.setText(s_team);
+                        txtMH.setText(s_mh);
+                        if("1".equals(s_sex)) {
+                            rsexM.setSelected(true);
+                        }
+                        else{
+                            rsexM.setSelected(false);
+                        }
+                        if("2".equals(s_sex)) {
+                            rsexF.setSelected(true);
+                        }
+                        else{
+                            rsexF.setSelected(false);
+                        }
+                        if ("T".equals(s_om)) {
+                            cOM.setSelected(true);
+                        }
+                        else {
+                            cOM.setSelected(false);
+                        }
+                        if ("T".equals(s_omdeal)) {
+                            comDealer.setSelected(true);
+                        }
+                        else {
+                            comDealer.setSelected(false);
+                        }
+                        if ("T".equals(s_fm)) {
+                            cFM.setSelected(true);
+                        }
+                        else {
+                            cFM.setSelected(false);
+                        }
+                        if ("T".equals(s_fmdeal)) {
+                            cfmDealer.setSelected(true);
+                        }
+                        else {
+                            cfmDealer.setSelected(false);
+                        }
+                        txtKnown.setText(s_known);
+                        txtNationality.setText(s_nationality);
+                        if("1".equals(s_civilstat)){
+                            comCivil.setSelectedItem("SINGLE");
+                        }
+                        else if("2".equals(s_civilstat)){
+                            comCivil.setSelectedItem("MARRIED");
+                        }
+                        else if("3".equals(s_civilstat)){
+                            comCivil.setSelectedItem("WIDOW");
+                        }
+                        else if("4".equals(s_civilstat)){
+                            comCivil.setSelectedItem(null);
+                        }
+                        else{
+                            comCivil.setSelectedItem(null);
+                        }
+                        txtTelnum.setText(s_tnumber);
+                        txtOffice.setText(s_offphone);
+                        txtProf.setText(s_profession);
+                        txtTIN.setText(s_tin);
+                        txtMobile.setText(s_mobphone);
+                        txtAltnum.setText(s_altphone);
+                        txtEmail.setText(s_email);
+                        txtAltemail.setText(s_altemail);
+                        if("T".equals(s_loyal)) {
+                            cLoyal.setSelected(true);
+                        }
+                        else{
+                            cLoyal.setSelected(false);
+                        }
+                        if("T".equals(s_legacy)) {
+                            cLegacy.setSelected(true);
+                        }
+                        else{
+                            cLegacy.setSelected(false);
+                        }
+                        if("T".equals(s_autorev)) {
+                            cAutoshiprev.setSelected(true);
+                        }
+                        else{
+                            cAutoshiprev.setSelected(false);
+                        }
+                        if("T".equals(s_autoship)) {
+                            cautoLegacy.setSelected(true);
+                        }
+                        else{
+                            cautoLegacy.setSelected(false);
+                        }
+                        if("T".equals(s_fmnominated)) {
+                            cFMnominated.setSelected(true);
+                        }
+                        else{
+                            cFMnominated.setSelected(false);
+                        }
+                        if("T".equals(s_omnominated)) {
+                            cOMnominated.setSelected(true);
+                        }
+                        else{
+                            cOMnominated.setSelected(false);
+                        }
+                        if("T".equals(s_isas)) {
+                            cSAS.setSelected(true);
+                        }
+                        else{
+                            cSAS.setSelected(false);
+                        }
+                        txtPackage.setText(s_packagedate);
+                        txtRemarks.setText(s_rem);
+                        
+                        
+                        if(s_upline == null){
+                            txtsur2.setText(null);
+                            txtFirst2.setText(null);
+                            txtMiddle2.setText(null);
+                        }
+                        else{
+                            String search_sql1 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_upline+"'";
+                            PreparedStatement stmt_search1 = conn_obj.prepareStatement(search_sql1);
+                            ResultSet rs_search1 = stmt_search1.executeQuery();
+                            int b = 0;
+                            while(rs_search1.next()){
+                                b++;
+                                
+                                s_upline = rs_search1.getString("UPLNO");
+                                s_sur2 = rs_search1.getString("SNAME");
+                                s_fname2 = rs_search1.getString("FNAME");
+                                s_m2 = rs_search1.getString("MNAME");
+                            }
+                            
+                            if(b > 0){
+                                txtsur2.setText(s_sur2);
+                                txtFirst2.setText(s_fname2);
+                                txtMiddle2.setText(s_m2);
+                            }
+                        }
+                        if(s_sponsor == null){
+                            txtsur3.setText(null);
+                            txtFirst3.setText(null);
+                            txtMiddle3.setText(null);
+                        }
+                        else{
+                            
+                            String search_sql3 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_sponsor+"'";
+                            PreparedStatement stmt_search3 = conn_obj.prepareStatement(search_sql3);
+                            ResultSet rs_search3 = stmt_search3.executeQuery();
+                            int c = 0;
+                            while(rs_search3.next()){
+                                c++;
+                                
+                                s_sponsor = rs_search3.getString("SPNO");
+                                s_sur3 = rs_search3.getString("SNAME");
+                                s_fname3 = rs_search3.getString("FNAME");
+                                s_m3 = rs_search3.getString("MNAME");
+                            }
+                            
+                            if(c > 0){
+                                txtsur3.setText(s_sur3);
+                                txtFirst3.setText(s_fname3);
+                                txtMiddle3.setText(s_m3);
+                            }
+                        }
+                        if(s_plusponsor == null){
+                            txtsur4.setText(null);
+                            txtFirst4.setText(null);
+                            txtMiddle4.setText(null);
+                        }
+                        else{
+                            String search_sql4 = "SELECT * FROM MEMBER1 WHERE IDNO = '"+s_plusponsor+"'";
+                            PreparedStatement stmt_search4 = conn_obj.prepareStatement(search_sql4);
+                            ResultSet rs_search4 = stmt_search4.executeQuery();
+                            int d = 0;
+                            while(rs_search4.next()){
+                                d++;
+                                
+                                s_plusponsor = rs_search4.getString("SPNO");
+                                s_sur4 = rs_search4.getString("SNAME");
+                                s_fname4 = rs_search4.getString("FNAME");
+                                s_m4 = rs_search4.getString("MNAME");
+                            }
+                            
+                            if(d > 0){
+                                txtsur4.setText(s_sur4);
+                                txtFirst4.setText(s_fname4);
+                                txtMiddle4.setText(s_m4);
+                            }
+                        }
+                        if (!txtBA.getText().isEmpty()) {
+                            String search_sql5 = "SELECT * FROM ORPAID WHERE IDNO = '"+s_ba+"'"
+                                    + "AND TRNSCT NOT IN (10, 78, 47, 48, 49, 172)"
+                                    + "AND ISCANCEL = 'F'";
+                            PreparedStatement stmt_search5 = conn_obj.prepareStatement(search_sql5);
+                            ResultSet rs_search5 = stmt_search5.executeQuery();
+                            int e = 0;
+                            while(rs_search5.next()){
+                                e++;
+                                s_newdeal = rs_search5.getString("NEW_DEALER");
+                            }
+                            if (e > 0) {
+                                
+                                if ("T".equals(s_newdeal)) {
+                                    cNewdealer.setSelected(true);
+                                }
+                                else {
+                                    cNewdealer.setSelected(false);
+                                }
+                            }
+                        }
+                        else if("F".equals(s_isas) || s_isas == null){
+                            cNewdealer.setSelected(false);
+                        }
+                        else{
+                            cNewdealer.setSelected(false);
+                        }
+                        
+                        if(!txtBA.getText().isEmpty()){
+                            String countQuery = "SELECT COUNT(1) FROM  HALL_OF_FAMER WHERE idno = ?";
+                            PreparedStatement countStatement = conn_obj.prepareStatement(countQuery);
+                            countStatement.setString(1, s_ba);
+                            ResultSet countResult = countStatement.executeQuery();
+                            
+                            if (countResult.next()) {
+                                nCnt = countResult.getInt(1);
+                            }
+                            if (nCnt > 0) {
+                                
+                                String categoryQuery1 = "SELECT CATEG FROM HALL_OF_FAMER WHERE idno = ?";
+                                PreparedStatement categoryStatement = conn_obj.prepareStatement(categoryQuery1);
+                                categoryStatement.setString(1, s_ba);
+                                ResultSet categoryResult = categoryStatement.executeQuery();
+                                
+                                if (categoryResult.next()) {
+                                    s_hofcateg = categoryResult.getString("CATEG");
+                                }
+                                if (!"MOVE".equals(s_hofcateg) && s_hofcateg != null) {
+                                    txtDealer.setText(s_hofcateg);
+                                    if ("REGULAR".equals(s_hofcateg)) {
+                                        txtDealer.setText(s_hofcateg);
+                                    }else{
+                                        txtDealer.setText(s_dealcat+"/"+ s_hofcateg);
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        if(!txtBA.getText().isEmpty()){
+                            String search_sql7 = "SELECT * FROM BLOCK_BA WHERE IDNO = '"+s_ba+"' "
+                                    + "ORDER BY DTE_UPDATE, TRANTIME DESC";
+                            PreparedStatement stmt_search7 = conn_obj.prepareStatement(search_sql7);
+                            ResultSet rs_search7 = stmt_search7.executeQuery();
+                            int f = 0;
+                            while(rs_search7.next()){
+                                f++;
+                                
+                                s_remlegal = rs_search7.getString("REM");
+                            }
+                            if(f > 0){
+                                txtLegal.setText(s_remlegal);
+                            }
+                        }
+                        
+                        
+                        
+                        JTextField[] textFields = {
+                            txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP,
+                            txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2,
+                            txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
+                            txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
+                            txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
+                            txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
+                            txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage,
+                            txtRemarks, txtLegal
+                        };
+                        for (JTextField textField : textFields) {
+                            textField.setEditable(true);
+                        }
+                        
+                        JCheckBox[] checkboxes = {
+                            cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
+                            cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
+                                
+                        };
+                        for (JCheckBox checkbox : checkboxes) {
+                            checkbox.setEnabled(true);
+                        }
+                        JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
+                        
+                        for (JRadioButton radioButton : radioButtons) {
+                            radioButton.setEnabled(true);
+                        }
+                        
+                        comCivil.setEnabled(true);
+                        txtBA.selectAll();
+                        
+                        
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "BA DOES NOT EXIST!","Error", JOptionPane.INFORMATION_MESSAGE);
+                        JTextField[] textFields = {
+                            txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP,
+                            txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2,
+                            txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
+                            txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
+                            txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
+                            txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
+                            txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage,
+                            txtRemarks, txtLegal
+                        };
+                        for (JTextField textField : textFields) {
+                            textField.setEditable(false);
+                            textField.setText("");
+                        }
+                        JCheckBox[] checkboxes = {
+                            cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
+                            cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
+                                
+                        };
+                        for (JCheckBox checkbox : checkboxes) {
+                            checkbox.setSelected(false);
+                            checkbox.setEnabled(false);
+                        }
+                        JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
+                        
+                        for (JRadioButton radioButton : radioButtons) {
+                            radioButton.setSelected(false);
+                            radioButton.setEnabled(false);
+                        }
+                        comCivil.setSelectedItem(null);
+                        comCivil.setEnabled(false);
+                        txtBA.setText("");
+                    }
+                    
                 }
-        
-             }       
-      
-             if(!txtBA.getText().isEmpty()){
-                 String search_sql7 = "SELECT * FROM BLOCK_BA WHERE IDNO = '"+s_ba+"' "
-                 + "ORDER BY DTE_UPDATE, TRANTIME DESC";
-                 PreparedStatement stmt_search7 = conn_obj.prepareStatement(search_sql7); 
-                 ResultSet rs_search7 = stmt_search7.executeQuery();
-                 int f = 0;
-                 while(rs_search7.next()){
-                     f++;
-                     
-                    s_remlegal = rs_search7.getString("REM");
-                }
-                 if(f > 0){
-                     txtLegal.setText(s_remlegal);
-                 }
-               }
-             
-      
-             
-            JTextField[] textFields = {
-                txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP, 
-                txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2, 
-                txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
-                txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
-                txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
-                txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
-                txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage, 
-                txtRemarks, txtLegal
-            };
-            for (JTextField textField : textFields) {
-                textField.setEditable(true);
-             }     
-            
-            JCheckBox[] checkboxes = {
-            cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
-            cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
-
-              };
-            for (JCheckBox checkbox : checkboxes) {
-                 checkbox.setEnabled(true);
             }
-            JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
-
-            for (JRadioButton radioButton : radioButtons) {
-                 radioButton.setEnabled(true);
-             } 
-            
-              comCivil.setEnabled(true);
-            }
-           else {
-              JOptionPane.showMessageDialog(null, "BA DOES NOT EXIST!","Error", JOptionPane.INFORMATION_MESSAGE);  
-                JTextField[] textFields = {
-                txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP, 
-                txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2, 
-                txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
-                txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
-                txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
-                txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
-                txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage, 
-                txtRemarks, txtLegal
-            };
-            for (JTextField textField : textFields) {
-                textField.setEditable(false);
-                textField.setText("");        
-             }       
-              JCheckBox[] checkboxes = {
-            cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
-            cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
-
-              };
-            for (JCheckBox checkbox : checkboxes) {
-                 checkbox.setSelected(false);
-                 checkbox.setEnabled(false);
-            }
-            JRadioButton[] radioButtons = {rsexM, rsexF, rGroupA, rGroupB};
-
-            for (JRadioButton radioButton : radioButtons) {
-                 radioButton.setSelected(false);
-                 radioButton.setEnabled(false);
-             }    
-              comCivil.setSelectedItem(null); 
-              comCivil.setEnabled(false);
-           }
-           
-           }
-             rs_search.close();
-             stmt_search.close();
              conn_obj.close();
              
               } catch (SQLException ex) {
@@ -2127,27 +2150,17 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
     }
     }//GEN-LAST:event_rGroupBActionPerformed
 
-    private void txtBAKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBAKeyReleased
-         if (!(Pattern.matches("^[a-zA-Z0-9\\s-]*$", txtBA.getText()))) {
-         txtBA.setText("");
-         JOptionPane.showMessageDialog(null, "Special Character is invalid.","Error", JOptionPane.INFORMATION_MESSAGE);
-        }
-        
-   
-
-    }//GEN-LAST:event_txtBAKeyReleased
-
     private void txtBAKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBAKeyPressed
-       // limit to 8 characters will no longer add characters once it reaches 8
-        txtBA.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyTyped(KeyEvent evt) {
-            if ( txtBA.getText().length() >= 8 ) 
-                evt.consume();
-        }
-    });  
- 
-     
+           // limit to 8 characters will no longer add characters once it reaches 8
+           ((AbstractDocument) txtBA.getDocument()).setDocumentFilter(new DocumentFilter() {    
+             public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+             throws BadLocationException {
+                if (text.equals("") || (fb.getDocument().getLength() - length + text.length() <= 8)) {
+                    super.replace(fb, offset, length, text, (javax.swing.text.AttributeSet) attrs);
+                }
+            }
+             });
+
     }//GEN-LAST:event_txtBAKeyPressed
 
     private void CLOSEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLOSEActionPerformed
@@ -2300,7 +2313,48 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
     }//GEN-LAST:event_txtMiddle1ActionPerformed
 
     private void txtBAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtBAMouseClicked
-        // TODO add your handling code here:
+     JTextField[] textFields = {
+        txtBA, txtOrigin, txtAccount, txtIpac, txtPSOL, txtReplace, txtPlus, txtQdate, txtUP, 
+        txtSponsor, txtPsponsor, txtsur1, txtsur2, txtsur3, txtsur4, txtFirst1, txtFirst2, 
+        txtFirst3, txtFirst4, txtMiddle1, txtMiddle2, txtMiddle3, txtMiddle4, txtAppear,txtHome,
+        txtBusiness, txtReciept, txtPower, txtMax,  txtBirth, txtPPack, txtmaxStats, txtmaxDate,
+        txtexpDate, txtStatus,  txtdateAct, txtdateInact, txtPiba, txtdatePiba, txtidPower, txtPayout,
+        txtBlocked, txtTerminated, txtdateTermBlock, txtDealer, txtTeam, txtMH, txtKnown, txtNationality,
+        txtTelnum, txtOffice, txtProf, txtTIN, txtMobile, txtAltnum, txtEmail, txtAltemail, txtPackage, 
+        txtRemarks, txtLegal
+                
+        };
+        for (JTextField textField : textFields) {
+          if (textField != txtBA) {
+           textField.setText("");
+            textField.setEditable(false);
+             }else {
+                textField.setText(""); // Optional, to clear the text in txtBA
+                  textField.setEditable(true);
+                     }
+          
+         }
+       
+            JCheckBox[] checkboxes = {
+                cNewdealer, cOM, comDealer, cFM, cfmDealer, cLegacy, cLoyal,
+                cAutoshiprev, cautoLegacy, cFMnominated, cOMnominated, cSAS
+
+              };
+            for (JCheckBox checkbox : checkboxes) {
+                 checkbox.setSelected(false);
+                 checkbox.setEnabled(false);
+            }
+            JRadioButton[] radioButtons = {
+                rsexM, rsexF, rGroupA, rGroupB
+            };
+
+            for (JRadioButton radioButton : radioButtons) {
+                 radioButton.setSelected(false);
+                 radioButton.setEnabled(false);
+             }    
+              comCivil.setSelectedItem(null); 
+              comCivil.setEnabled(false);
+              comCivil.setSelectedItem(null);       
     }//GEN-LAST:event_txtBAMouseClicked
 
     private void CLEARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLEARActionPerformed
@@ -2348,8 +2402,9 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
     }//GEN-LAST:event_CLEARActionPerformed
 
     private void txtBAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBAFocusGained
-
+   
      txtBA.selectAll();
+     
    
     }//GEN-LAST:event_txtBAFocusGained
 
@@ -2416,10 +2471,10 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                    s_rem=txtRemarks.getText().trim();  
                    s_remlegal=txtLegal.getText().trim();
                    s_hofcateg=txtDealer.getText().trim();
-                   s_civilstat=comCivil.getSelectedItem().toString().trim();
+               
                 
                 try{     
-        
+        /*
                 if(cNewdealer.isSelected())
                 {
                   s_newdeal = "T"; 
@@ -2490,18 +2545,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                     s_blocked1 = "F";
                     s_term1 = "F";
                 }
-                
-                
-                
-  		if("SINGLE".equals(s_civilstat)){
-                     s_civilstat1 = 1;
-                }else if("MARRIED".equals(s_civilstat)){
-                     s_civilstat1 = 2;
-                }else if("WIDOW".equals(s_civilstat)){
-                     s_civilstat1 = 3;
-                }else {
-                     s_civilstat1 = 4;
-                }
+              
                  if("Online Local".equals(s_dealcat)){
                     s_dealcat1 = 0;
                  }else if("iMove Operator".equals(s_dealcat)){
@@ -2525,8 +2569,19 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                  }else if("Online LOCAL-PW".equals(s_dealcat)){
                     s_dealcat1 = 11;   
                  }else{
-                    txtDealer.setText("REGULAR");
+                   s_dealcat1 = null;
                  }
+                */
+        
+  		if("SINGLE".equals(s_civilstat)){
+                     s_civilstat1 = 1;
+                }else if("MARRIED".equals(s_civilstat)){
+                     s_civilstat1 = 2;
+                }else if("WIDOW".equals(s_civilstat)){
+                     s_civilstat1 = 3;
+                }else {
+                     s_civilstat1 = null;
+                }
                  
                  if(rGroupA.isSelected()){
                   s_grp1 = 1; 
@@ -2544,6 +2599,7 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                   s_sex = "2"; 
                  }
   
+                 /*
                  if(cOM.isSelected())
                  {
                   s_om = "T"; 
@@ -2641,18 +2697,34 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                  {
                   s_isas = "F"; 
                  }
+                 */
                   //handles ERROR
+                  
+                  /*
                     if (!Arrays.asList("PL", "SN", "TI", "PS").contains(txtReplace.getText())) {
                         JOptionPane.showMessageDialog(null, "Replacement Category should be SN, TI, PL, or PS...", "Alert", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException("REPLACE_FOR_FAILED");
-                    }           
+                    }      
+                    
+                    if(Date_DPlus.compareTo(Date_Plus) > 0){
+                         JOptionPane.showMessageDialog(null, "Please check membership date of upline...", "Alert", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException("PLUSDATE_FAILED");
+                     }
+                    */
+                  
+                    
                     if(!rGroupA.isSelected() && !rGroupB.isSelected()){
                          JOptionPane.showMessageDialog(null, "Select A Group", "Alert", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException("GROUP_INPUT_FAILED");
                      }
-                    if (!Arrays.asList("C", "V", "W").contains(txtTeam.getText())) {
-                        JOptionPane.showMessageDialog(null, "Not a Valid Team Input", "Alert", JOptionPane.ERROR_MESSAGE);
-                        throw new RuntimeException("TEAM_INPUT_FAILED");
+                    if (txtTeam.getText() == null || txtTeam.getText().isEmpty()) {
+                        // Handle the case when the input is empty
+                        // You may want to show a message or take appropriate action
+                    } else {
+                        if (!Arrays.asList("C", "V", "W").contains(txtTeam.getText())) {
+                            JOptionPane.showMessageDialog(null, "Not a Valid Team Input", "Alert", JOptionPane.ERROR_MESSAGE);
+                            throw new RuntimeException("TEAM_INPUT_FAILED");
+                        }
                     }
                     if(!rsexM.isSelected() && !rsexF.isSelected()){
                          JOptionPane.showMessageDialog(null, "Select A Gender", "Alert", JOptionPane.ERROR_MESSAGE);
@@ -2661,69 +2733,26 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                          
                  
 	            String update_sql1 = "UPDATE DEV.MEMBER1 SET "
-                    + "IDNO = ?, "
-                    + "ORGN = ?, UPLNO = ?, SPNO = ?, SPNOPLUS = ?, "
-                    + "SNAME = ?, FNAME = ?, MNAME = ?, ACCT_CATEG = ?, IAP = ?, ISPSOL = ?, "
-                    + "CATEG = ?, PLUSDATE = ?, MDATE = ?, CHK_RECIP = ?, RECIP = ?, PLUSPACK_REC = ?, "
-                    + "MAXUP_CLAIMEDBY = ?, GRP = ?, ISPLUSPACK = ?, MAXSTAT = ?, MAXUPDATE = ?, MAXUP_EXPDATE = ?, "
-                    + "ISACTIVE_PLUS = ?, DTE_ACTIVE = ?, DTE_INACTIVE = ?, ISPIBA = ?, DTE_PIBA = ?, IDNO_POWERCARD = ?, "
-                    + "PAYOUT = ?, ISBANK_TRANSFER_OK = ?, ISBLOCK = ?, ISTERMINATED = ?, DTE_TERMINATED = ?, "
-                    + "IMOVE = ?, TEAM = ?, MH_ACCT = ?, ISPA_SPONSOR = ?, ISOM_DEALER = ?, ISFM_SPONSOR = ?, "
-                    + "ISFM_DEALER = ?, TIN = ?, ISLEGACY = ?, ISLOYAL = ?, ISAUTOSHIP = ?, ISAUTOSHIP_REVUP = ?, "
-                    + "ISOM_NOMINATED = ?, ISFM_NOMINATED = ?, IS_SAS = ?, IPACKAGE_DTE = ? "
+                    + "UPLNO = ?, SPNO = ?, SPNOPLUS = ?, "
+                    + "SNAME = ?, FNAME = ?, MNAME = ?,"
+                    + "CATEG = ?,  CHK_RECIP = ?,  MH_ACCT = ?, "
+                    + "GRP = ?, TEAM = ?, TIN = ? "                 
                     + "WHERE IDNO = ? ";
                     PreparedStatement stmt_update1 = conn_obj.prepareStatement(update_sql1);
-                    stmt_update1.setString(1, s_ba);
-                    stmt_update1.setString(2, s_origin);
-                    stmt_update1.setString(3, s_upline);
-                    stmt_update1.setString(4, s_sponsor);
-                    stmt_update1.setString(5, s_plusponsor);
-                    stmt_update1.setString(6, s_sur1);
-                    stmt_update1.setString(7, s_fname1);
-                    stmt_update1.setString(8, s_m1);
-                    stmt_update1.setString(9, s_account);
-                    stmt_update1.setString(10, s_ipac);
-                    stmt_update1.setString(11, s_psol);
-                    stmt_update1.setString(12, s_replace);
-                    stmt_update1.setString(13, s_plus);
-                    stmt_update1.setString(14, s_qdate);
-                    stmt_update1.setString(15, s_namecheck);
-                    stmt_update1.setString(16, s_recip);
-                    stmt_update1.setString(17, s_powerby);
-                    stmt_update1.setString(18, s_maxup);
-                    stmt_update1.setInt(19, s_grp1);
-                    stmt_update1.setString(20, s_ppack1);
-                    stmt_update1.setString(21, s_maxstats1);
-                    stmt_update1.setString(22, s_maxdate);
-                    stmt_update1.setString(23, s_expdate);
-                    stmt_update1.setString(24, s_stats1);
-                    stmt_update1.setString(25, s_actdate);
-                    stmt_update1.setString(26, s_incdate);
-                    stmt_update1.setString(27, s_piba1);
-                    stmt_update1.setString(28, s_datepiba);
-                    stmt_update1.setString(29, s_idpcard);
-                    stmt_update1.setString(30, s_payout1);
-                    stmt_update1.setString(31, s_banktrans);
-                    stmt_update1.setString(32, s_blocked1);
-                    stmt_update1.setString(33, s_term1);
-                    stmt_update1.setString(34, s_dtb);
-                    stmt_update1.setInt(35, s_dealcat1);
-                    stmt_update1.setString(36, s_team);
-                    stmt_update1.setString(37, s_mh);
-                    stmt_update1.setString(38, s_om);
-                    stmt_update1.setString(39, s_omdeal);
-                    stmt_update1.setString(40, s_fm);
-                    stmt_update1.setString(41, s_fmdeal);
-                    stmt_update1.setString(42, s_tin);
-                    stmt_update1.setString(43, s_legacy);
-                    stmt_update1.setString(44, s_loyal);
-                    stmt_update1.setString(45, s_autoship);
-                    stmt_update1.setString(46, s_autorev);
-                    stmt_update1.setString(47, s_omnominated);
-                    stmt_update1.setString(48, s_fmnominated);
-                    stmt_update1.setString(49, s_isas);
-                    stmt_update1.setString(50, s_packagedate);
-                    stmt_update1.setString(51, s_ba);
+                    stmt_update1.setString(1, s_upline);               
+                    stmt_update1.setString(2, s_sponsor);
+                    stmt_update1.setString(3, s_plusponsor);
+                    stmt_update1.setString(4, s_sur1);
+                    stmt_update1.setString(5, s_fname1);
+                    stmt_update1.setString(6, s_m1);
+                    stmt_update1.setString(7, s_replace);
+                    stmt_update1.setString(8, s_namecheck);
+                    stmt_update1.setString(9, s_mh);
+                    stmt_update1.setInt(10, s_grp1 );
+                    stmt_update1.setString(11, s_team);
+                    stmt_update1.setString(12, s_tin);
+                    stmt_update1.setString(13, s_ba);
+               
                     int rowsUpdated1 = stmt_update1.executeUpdate();
               
                     String update_sql2 = "UPDATE DEV.MEMBER1 SET "
@@ -2770,14 +2799,14 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                     int rowsUpdated5 = stmt_update5.executeUpdate();
                     
                     String update_sql6 = "UPDATE MEMBER3 SET "
-                    + "BDATE = ?, NATION = ?, SEX = ?, CSTAT = ?, HOMEADD = ?, BUSADD = ?, HOMPHON = ?, OFFPHON = ?, "
+                    + "BDATE = TO_DATE(?, 'MM-DD-YYYY'), NATION = ?, SEX = ?, CSTAT = ?, HOMEADD = ?, BUSADD = ?, HOMPHON = ?, OFFPHON = ?, "
                     + "PROF = ?, MOBPHON = ?, EMAIL_ADD = ?, EMAIL_ADD2 = ?, MOBPHON2 = ?, KNOWNUPLINE = ?, REM = ? "
-                    + "WHERE IDNO = ?";
+                    + "WHERE IDNO = ? ";
                     PreparedStatement stmt_update6 = conn_obj.prepareStatement(update_sql6);
-                    stmt_update6.setString(1, s_bdate);
+                    stmt_update6.setString(1, s_bdate);  // Assuming s_bdate is a string in 'dd-MM-yy' format
                     stmt_update6.setString(2, s_nationality);
                     stmt_update6.setString(3, s_sex);
-                    stmt_update6.setInt(4, s_civilstat1);
+                    stmt_update6.setObject(4, s_civilstat1);
                     stmt_update6.setString(5, s_home);
                     stmt_update6.setString(6, s_business);
                     stmt_update6.setString(7, s_tnumber);
@@ -2806,28 +2835,43 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
                     PreparedStatement stmt_update8 = conn_obj.prepareStatement(update_sql8);
                     stmt_update8.setString(1, s_hofcateg);
                     stmt_update8.setString(2, s_ba);                 
-                    int rowsUpdated8 = stmt_update8.executeUpdate();
+                    int rowsUpdated8 = stmt_update8.executeUpdate();             
                     
-                    String update_sql9 = "UPDATE AGNEW SET "
-                    + "BDAY = ?, EXPDATE = ? "
-                    + "WHERE IDNO_MINOR = ? ";
+                    String update_sql9 = "UPDATE DEV.RAFFLE_ELECTRONIC SET "
+                    + "BANAME = ? "
+                    + "WHERE IDNO = ?"
+                    + "AND ISCANCEL = 'F' ";
                     PreparedStatement stmt_update9 = conn_obj.prepareStatement(update_sql9);
-                    stmt_update9.setString(1, s_bdate);
-                    stmt_update9.setString(2, s_aegexpdate);
-                    stmt_update9.setString(3, s_ba);
+                    stmt_update9.setString(1, s_sur1 + s_fname1 + s_m1);
+                    stmt_update9.setString(2, s_ba);                 
                     int rowsUpdated9 = stmt_update9.executeUpdate();
-                    
                   
-                    
-                 
+                    String update_sql10 = "UPDATE KAVITAAN_MEMFILE SET "
+                    + "BDATE = TO_DATE(?, 'MM-DD-YYYY') "
+                    + "WHERE IDNO = ?";      
+                    PreparedStatement stmt_update10 = conn_obj.prepareStatement(update_sql10);
+                    stmt_update10.setString(1, s_bdate);
+                    stmt_update10.setString(2, s_ba);                 
+                    int rowsUpdated10 = stmt_update10.executeUpdate();
+
+                    String update_sql11 = "UPDATE AGNEW SET "
+                    + "BDAY = TO_DATE(?, 'MM-DD-YYYY'), EXPDATE = ADD_MONTHS(TO_DATE(?, 'MM-DD-YYYY'), 216) "
+                    + "WHERE IDNO_MINOR = ?";
+                    PreparedStatement stmt_update11 = conn_obj.prepareStatement(update_sql11);
+                    stmt_update11.setString(1, s_bdate);
+                    stmt_update11.setString(2, s_bdate);
+                    stmt_update11.setString(3, s_ba);
+                    int rowsUpdated11 = stmt_update11.executeUpdate();
+
                    if(rowsUpdated1 >= 0 && rowsUpdated2 >= 0 && rowsUpdated3 >= 0 && rowsUpdated4 >= 0 && rowsUpdated5 >= 0 
-                     && rowsUpdated6 >= 0  && rowsUpdated7 >= 0 && rowsUpdated8 >= 0 && rowsUpdated9 >= 0  ) {
+                     && rowsUpdated6 >= 0  && rowsUpdated7 >= 0 && rowsUpdated8 >= 0 && rowsUpdated9 >=0 && rowsUpdated10 >= 0
+                     && rowsUpdated11 >= 0 ) {
                     JOptionPane.showMessageDialog(null, "UPDATED.", "SUCCESS", JOptionPane.INFORMATION_MESSAGE);
                     }else{
                     JOptionPane.showMessageDialog(null, "No Records Found.", "Error", JOptionPane.INFORMATION_MESSAGE);
                     }
 
-              
+                   txtBA.grabFocus();
                     
                     
                  
@@ -2869,10 +2913,17 @@ String s_origin, s_account, s_ipac, s_psol, s_replace, s_plus, s_qdate, s_ba, s_
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTeamKeyPressed
 
-    private void CashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CashierActionPerformed
-               
-         
-    }//GEN-LAST:event_CashierActionPerformed
+    private void txtPlusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPlusActionPerformed
+            
+    }//GEN-LAST:event_txtPlusActionPerformed
+
+    private void txtBAKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBAKeyReleased
+          if (!(Pattern.matches("^[a-zA-Z0-9\\s-]*$", txtBA.getText()))) {
+         txtBA.setText("");
+         JOptionPane.showMessageDialog(null, "Special Character is invalid.","Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_txtBAKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

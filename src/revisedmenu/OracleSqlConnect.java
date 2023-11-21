@@ -20,7 +20,7 @@ public class OracleSqlConnect {
     public static Connection ConnectDB(){
         try{
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            Connection conn=DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.108:1521/QUADRNT", "dev", "neoquadro");
+            Connection conn=DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.70:1521/QUADRNT", "dev", "neoquadro");//@192.168.0.108
             return conn;
         }catch(Exception e){
            JOptionPane.showMessageDialog(null, e);

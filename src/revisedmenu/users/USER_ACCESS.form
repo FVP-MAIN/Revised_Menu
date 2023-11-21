@@ -648,6 +648,7 @@
                               <Component id="it_items_manila" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="it_del_info" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="it_pending_identity" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="609" max="32767" attributes="0"/>
                   </Group>
@@ -666,7 +667,9 @@
                       <Component id="it_items_manila" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="it_delivery_report" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="130" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="it_pending_identity" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -696,6 +699,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Delear&apos;s Information"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="it_pending_identity">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Pending Identity"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="it_pending_identityActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

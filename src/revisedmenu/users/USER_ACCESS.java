@@ -17,7 +17,7 @@ import revisedmenu.OracleSqlConnect;
 
 public class USER_ACCESS extends javax.swing.JInternalFrame {
 String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_department, s_dept, s_deptcode, s_dc, s_branch, usr_lvl, dept, dptcode,
-       s_special, s_its, s_user_access, s_items, s_items_manila, s_del_rep, s_mem;
+       s_special, s_its, s_user_access, s_items, s_items_manila, s_del_rep, s_mem, s_pending;
  
 
 
@@ -79,6 +79,7 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
         it_user_access = new javax.swing.JCheckBox();
         it_items_manila = new javax.swing.JCheckBox();
         it_del_info = new javax.swing.JCheckBox();
+        it_pending_identity = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -307,6 +308,13 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
 
         it_del_info.setText("Delear's Information");
 
+        it_pending_identity.setText("Pending Identity");
+        it_pending_identity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                it_pending_identityActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -320,7 +328,8 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addComponent(it_items_manila))
-                    .addComponent(it_del_info))
+                    .addComponent(it_del_info)
+                    .addComponent(it_pending_identity))
                 .addContainerGap(609, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -336,7 +345,9 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
                 .addComponent(it_items_manila)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(it_delivery_report)
-                .addContainerGap(130, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(it_pending_identity)
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("IT ", jPanel6);
@@ -698,15 +709,35 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
                 {
                   s_mem = "F"; 
                 }
+                if(it_pending_identity.isSelected())
+                {
+                  s_pending = "T"; 
+                }
+                else
+                {
+                  s_pending = "F"; 
+                }
          if(s > 0){
                 String update_sql = "UPDATE REVISED_USERS SET USRNAME= '"+s_username+"', FULNME = '"+s_fullname+"', "
                 + " USRLEV ='"+s_ulvl+"', PASWRD= '"+spassword+"', CONPAS ='"+s_cpassword+"', DEPT = '"+s_dept+"', "
                 + " DEPT_CODE = '"+s_dc+"', BRANCH = '"+s_branch+"', SPECIAL = '"+s_special+"', IT_SYSADMIN = '"+s_its+"', "
                 + " D_USERS = '"+s_user_access+"', D_ITEM = '"+s_items+"', R_DEL_REP = '"+s_del_rep+"', D_ITEM_MLA = '"+s_items_manila+"',"
-                + " D_MEM = '"+s_mem+"'"
+                + " D_MEM = '"+s_mem+"', D_PENDING_IDENTITY = '"+s_pending+"'"
                 + " WHERE USRNAME = '"+s_username+"'";
                 PreparedStatement stmt_save = conn_obj.prepareStatement(update_sql);
                 ResultSet rs_save = stmt_save.executeQuery();
+                
+                }
+         else{
+                String insert_sql = "INSERT INTO REVISED_USERS (USRNAME, FULNME, USRLEV, PASWRD, CONPAS, DEPT, DEPT_CODE, BRANCH, "
+                + "SPECIAL, IT_SYSADMIN, D_USERS, D_ITEM, R_DEL_REP, D_ITEM_MLA, D_MEM, D_PENDING_IDENTITY) "
+                + "VALUES ('"+s_username+"','"+s_fullname+"','"+s_ulvl+"',"
+                + "'"+spassword+"','"+s_cpassword+"','"+s_dept+"','"+s_dc+"','"+s_branch+"','"+s_special+"','"+s_its+"',"
+                + "'"+s_user_access+"','"+s_items+"', '"+s_del_rep+"','"+s_items_manila+"','"+s_mem+"','"+s_pending+"')";
+                PreparedStatement stmt_insert = conn_obj.prepareStatement(insert_sql);
+                ResultSet rs_insert = stmt_insert.executeQuery();  
+                
+                }  
                 
                 username.setText("");
                 full_name.setText("");
@@ -723,34 +754,7 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
                 it_items_manila.setSelected(false);
                 it_delivery_report.setSelected(false);
                 it_del_info.setSelected(false);
-                }
-         else{
-                String insert_sql = "INSERT INTO REVISED_USERS (USRNAME, FULNME, USRLEV, PASWRD, CONPAS, DEPT, DEPT_CODE, BRANCH, "
-                + "SPECIAL, IT_SYSADMIN, D_USERS, D_ITEM, R_DEL_REP, D_ITEM_MLA, D_MEM) "
-                + "VALUES ('"+s_username+"','"+s_fullname+"','"+s_ulvl+"',"
-                + "'"+spassword+"','"+s_cpassword+"','"+s_dept+"','"+s_dc+"','"+s_branch+"','"+s_special+"','"+s_its+"',"
-                + "'"+s_user_access+"','"+s_items+"', '"+s_del_rep+"','"+s_items_manila+"','"+s_mem+"')";
-                PreparedStatement stmt_insert = conn_obj.prepareStatement(insert_sql);
-                ResultSet rs_insert = stmt_insert.executeQuery();  
-                
-                username.setText("");
-                full_name.setText("");
-                user_level.setSelectedItem(null);
-                password.setText("");
-                c_password.setText("");
-                department.setSelectedItem(null);
-                dept_code.setSelectedItem(null);
-                branch.setText("");
-                spec.setSelected(false);
-                sysad.setSelected(false);
-                it_user_access.setSelected(false);
-                it_items.setSelected(false);
-                it_items_manila.setSelected(false);
-                it_delivery_report.setSelected(false);
-                it_del_info.setSelected(false); 
-                }  
-                
-              
+                it_pending_identity.setSelected(false);
              
     } catch (SQLException ex) {
         Logger.getLogger(USER_ACCESS.class.getName()).log(Level.SEVERE, null, ex);
@@ -787,6 +791,7 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
              s_items_manila = rs_search.getString("D_ITEM_MLA");
              s_del_rep = rs_search.getString("R_DEL_REP");
              s_mem = rs_search.getString("D_MEM");
+             s_pending = rs_search.getString("D_PENDING_IDENTITY");
         }
        //USERS 
         if(s > 0){
@@ -842,7 +847,12 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
                else{
                     it_del_info.setSelected(false);
                }   
-             
+             if ("T".equals(s_pending)) {
+                   it_pending_identity.setSelected(true);
+                 }
+               else{
+                   it_pending_identity.setSelected(false);
+               }  
 
               {
                 rs_search.close();
@@ -908,6 +918,7 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
             it_items_manila.setSelected(false);
             it_delivery_report.setSelected(false);
             it_del_info.setSelected(false);
+            it_pending_identity.setSelected(false);
           } 
           else 
           {
@@ -933,6 +944,10 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
 
     }//GEN-LAST:event_usernameKeyReleased
 
+    private void it_pending_identityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_it_pending_identityActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_it_pending_identityActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CLOSE;
@@ -952,6 +967,7 @@ String s_username, s_fullname, s_userlevel, s_ulvl, spassword, s_cpassword, s_de
     private javax.swing.JCheckBox it_delivery_report;
     private javax.swing.JCheckBox it_items;
     private javax.swing.JCheckBox it_items_manila;
+    private javax.swing.JCheckBox it_pending_identity;
     private javax.swing.JCheckBox it_user_access;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JInternalFrame jInternalFrame1;

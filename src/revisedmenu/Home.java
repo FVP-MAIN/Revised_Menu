@@ -19,9 +19,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import revisedmenu.dealers_info.MEMBERS;
 import revisedmenu.items.ITEMS_DATA_ENTRY_DS;
+import revisedmenu.pending.Pending_Identity;
 
 public class Home extends javax.swing.JFrame {
- String s_user, s_pass, s_user_access, s_items, s_items_manila, s_del_rep, s_mem;
+ String s_user, s_pass, s_user_access, s_items, s_items_manila, s_del_rep, s_mem, s_pending;
 
     public Home(){
      initComponents();
@@ -207,7 +208,6 @@ public class Home extends javax.swing.JFrame {
 
         DEAL_INFO.setText("Delear's Information");
         DEAL_INFO.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        DEAL_INFO.setEnabled(false);
         DEAL_INFO.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 DEAL_INFOMouseWheelMoved(evt);
@@ -504,6 +504,7 @@ public class Home extends javax.swing.JFrame {
        DELIVERY_REPORT.setEnabled(false);
        USER_ACC.setEnabled(false);
        DEAL_INFO.setEnabled(false);
+       PENDING_IDENTITY.setEnabled(false);
      
                    
     password.addActionListener(new ActionListener() {
@@ -576,7 +577,21 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_PAYCARDActionPerformed
 
     private void PENDING_IDENTITYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PENDING_IDENTITYActionPerformed
-        // TODO add your handling code here:
+        desktopPaneControl.removeAll();
+        desktopPaneControl.repaint();
+        Pending_Identity P_A = new Pending_Identity();
+        P_A.pack();
+
+        P_A.setVisible(true);
+        desktopPaneControl.add(P_A);
+        P_A.setResizable(false);
+        P_A.txtBA.grabFocus();
+        P_A.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        Dimension desktopSize = desktopPaneControl.getSize();
+        Dimension jInternalFrameSize = P_A.getSize();
+        P_A.setLocation((desktopSize.width - jInternalFrameSize.width)/2,
+            (desktopSize.height - jInternalFrameSize.height)/4);
     }//GEN-LAST:event_PENDING_IDENTITYActionPerformed
 
     private void USER_ACCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_USER_ACCActionPerformed
@@ -623,32 +638,28 @@ public class Home extends javax.swing.JFrame {
                 desktopPaneControl.add(mem);
                 mem.setResizable(false);
                 mem.txtBA.grabFocus();
+               
                 
                  try {
                     String Username = null;
                     Connection conn_obj = OracleSqlConnect.ConnectDB();
 
                     String sql1 = "SELECT USRNAME FROM REVISED_USERS WHERE USRNAME = ? AND PASWRD = ?";
-                    PreparedStatement stmt1 = conn_obj.prepareStatement(sql1);
-                    stmt1.setString(1, username.getText().trim());
-                    stmt1.setString(2, password.getText().trim());
-
-                    ResultSet rs1 = stmt1.executeQuery();
-
-                    if (rs1.next()) {
-                      Username = rs1.getString("USRNAME");
-                       mem.Cashier.setText(Username);
-                       mem.Cashier.setEditable(false);
-                    } else {
-                        // Handle the case where no matching user is found
-                        // You might want to display an error message or take appropriate action
+                    try (PreparedStatement stmt1 = conn_obj.prepareStatement(sql1)) {
+                        stmt1.setString(1, username.getText().trim());
+                        stmt1.setString(2, password.getText().trim());
+                        try (ResultSet rs1 = stmt1.executeQuery()) {
+                            if (rs1.next()) {
+                                Username = rs1.getString("USRNAME");
+                                mem.Cashier.setText(Username);
+                                mem.Cashier.setEditable(false);
+                            } else {
+                                // Handle the case where no matching user is found
+                                // You might want to display an error message or take appropriate action
+                            }
+                        }
                     }
-
-                    rs1.close();
-                    stmt1.close();
                 } catch (SQLException ex) {
-                    // Handle or log the exception here
-                    ex.printStackTrace();
                 }
 
                            
@@ -694,6 +705,7 @@ public class Home extends javax.swing.JFrame {
                 s_items_manila = pass_rs.getString("D_ITEM_MLA");
                 s_del_rep = pass_rs.getString("R_DEL_REP");
                 s_mem = pass_rs.getString("D_MEM");
+                s_pending = pass_rs.getString("D_PENDING_IDENTITY");
 
             }
 
@@ -729,6 +741,12 @@ public class Home extends javax.swing.JFrame {
                 }
                 else{
                     DEAL_INFO.setEnabled(false);
+                }
+                if("T".equals(s_pending)){
+                    PENDING_IDENTITY.setEnabled(true);
+                }
+                else{
+                    PENDING_IDENTITY.setEnabled(false);
                 }
                 LoginFrame.setVisible(false);
             }else{
@@ -824,7 +842,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JMenuItem LOST_CHECK;
     public javax.swing.JInternalFrame LoginFrame;
     private javax.swing.JMenuItem PAYCARD;
-    private javax.swing.JMenuItem PENDING_IDENTITY;
+    public javax.swing.JMenuItem PENDING_IDENTITY;
     private javax.swing.JMenuItem POWER_PACKS;
     private javax.swing.JMenuItem PROMO;
     private javax.swing.JMenuItem REPRINT_OR;
